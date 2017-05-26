@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Security;
 using System.Text;
 
@@ -227,6 +228,38 @@ namespace Rothko
         ///   The caller does not have the required permission.
         /// </exception>
         string ReadAllText(string path, Encoding encoding);
+
+        /// <summary>
+        ///   Opens an existing UTF-8 encoded text file for reading.
+        /// </summary>
+        /// <param name="path">he file to be opened for reading.</param>
+        /// <returns>
+        ///   A <see cref="StreamReader"/> on the specified path.
+        /// </returns>
+        /// <exception cref="T:System.ArgumentException">
+        ///   <paramref name="path"/> is a zero-length string, contains only white space, or contains one
+        ///     or more invalid characters as defined by the System.IO.Path.GetInvalidPathChars()
+        ///     method.
+        /// </exception>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="path"/> is null. </exception>
+        /// <exception cref="T:System.DirectoryNotFoundException">
+        ///   The specified <paramref name="path"/> is invalid (for example, it is on an unmapped drive).
+        /// </exception>
+        /// <exception cref="T:System.IO.FileNotFoundException">
+        ///   <paramref name="path" /> was not found.
+        /// </exception>
+        /// <exception cref="T:System.IO.PathTooLongException">
+        ///   The specified <paramref name="path"/>, file name, or both exceed the system-defined maximum length. For example, on
+        ///   Windows-based platforms, paths must be less than 248 characters, and file names must be less than
+        ///   260 characters. The specified path, file name, or both are too long.
+        /// </exception>
+        /// <exception cref="T:System.UnauthorizedAccessException">
+        ///   The caller does not have the required permission.
+        /// </exception>
+        /// <exception cref="T:System.NotSupportedException">
+        ///   The caller does not have the required permission.
+        /// </exception>
+        StreamReader OpenText(string path);
 
         /// <summary>
         /// Deletes the specified file.
