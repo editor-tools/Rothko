@@ -43,6 +43,11 @@ namespace Rothko
             return File.ReadAllText(path, encoding);
         }
 
+        public FileStream OpenRead(string path)
+        {
+            return File.OpenRead(path);
+        }
+
         public StreamReader OpenText(string path)
         {
             return File.OpenText(path);
