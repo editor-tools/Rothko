@@ -262,7 +262,7 @@ namespace Rothko
         /// <exception cref="T:System.IO.IOException">
         ///   An I/O error occurred while opening the file.
         /// </exception>
-        FileStream OpenRead(string path);
+        Stream OpenRead(string path);
 
         /// <summary>
         ///   Opens an existing UTF-8 encoded text file for reading.
