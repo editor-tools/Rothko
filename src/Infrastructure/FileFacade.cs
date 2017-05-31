@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-﻿using System.ComponentModel.Composition;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Rothko
 {
@@ -43,9 +44,14 @@ namespace Rothko
             return File.ReadAllText(path, encoding);
         }
 
-        public Stream OpenRead(string path)
+        public async Task<byte[]> ReadAllBytesAsync(string path)
         {
-            return File.OpenRead(path);
+            using (var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
+            {
+                var buffer = new MemoryStream();
+                await file.CopyToAsync(buffer);
+                return buffer.ToArray();
+            }
         }
 
         public StreamReader OpenText(string path)

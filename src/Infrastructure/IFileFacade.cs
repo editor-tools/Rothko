@@ -2,6 +2,7 @@
 using System.IO;
 using System.Security;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Rothko
 {
@@ -191,7 +192,7 @@ namespace Rothko
         ///   Opens a file, reads all lines of the file with the specified encoding, and
         ///   then closes the file.
         /// </summary>
-        /// <param name="path">The file to check.</param>
+        /// <param name="path">The file to open for reading.</param>
         /// <param name="encoding">The encoding that is applied to the contents of the file.</param>
         /// <returns>
         ///   All the lines of the file, or the lines that are the result of a query.
@@ -230,11 +231,12 @@ namespace Rothko
         string ReadAllText(string path, Encoding encoding);
 
         /// <summary>
-        ///   Opens an existing file for reading.
+        ///   Opens a binary file, asynchronously reads the contents of the file into a byte array, and then closes the file.
         /// </summary>
-        /// <param name="path">The file to be opened for reading.</param>
+        /// <param name="path">The file to read.</param>
+        /// <param name="encoding">The encoding that is applied to the contents of the file.</param>
         /// <returns>
-        ///   A read-only <see cref="FileStream"/> on the specified path.
+        ///   A task that represents the asynchronous read operation.
         /// </returns>
         /// <exception cref="T:System.ArgumentException">
         ///   <paramref name="path"/> is a zero-length string, contains only white space, or contains one
@@ -253,16 +255,21 @@ namespace Rothko
         ///   Windows-based platforms, paths must be less than 248 characters, and file names must be less than
         ///   260 characters. The specified path, file name, or both are too long.
         /// </exception>
+        /// <exception cref="T:System.IO.IOException">
+        ///   An I/O error occurred while opening the file.
+        /// </exception>
         /// <exception cref="T:System.UnauthorizedAccessException">
-        ///   The caller does not have the required permission.
+        ///   <paramref name="path"/> specified a file that is read-only.-or- This operation is not supported
+        ///   on the current platform.-or- path specified a directory.-or- The caller does
+        ///   not have the required permission.
         /// </exception>
         /// <exception cref="T:System.NotSupportedException">
         ///   The caller does not have the required permission.
         /// </exception>
-        /// <exception cref="T:System.IO.IOException">
-        ///   An I/O error occurred while opening the file.
+        /// <exception cref="T:System.Security.SecurityException">
+        ///   The caller does not have the required permission.
         /// </exception>
-        Stream OpenRead(string path);
+        Task<byte[]> ReadAllBytesAsync(string path);
 
         /// <summary>
         ///   Opens an existing UTF-8 encoded text file for reading.
