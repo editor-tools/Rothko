@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using NullGuard;
 
 namespace Rothko
 {
@@ -40,11 +41,12 @@ namespace Rothko
 
         internal static IDirectoryInfo Wrap(System.IO.DirectoryInfo dir)
         {
-            return new DirectoryInfo(dir);
+            return dir != null ? new DirectoryInfo(dir) : null;
         }
 
         public IDirectoryInfo Parent
         {
+            [return: AllowNull]
             get { return Wrap(inner.Parent); }
         }
 
@@ -75,52 +77,87 @@ namespace Rothko
 
         public void Delete(bool recursive)
         {
+            try
+            {
+                // Let's use the built in approach first.
+                inner.Delete(recursive);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // If it fails, we'll try our more expansive approach.
+                DeleteReadonly(recursive);
+            }
+        }
+
+        private void DeleteReadonly(bool recursive)
+        {
+            if (recursive)
+            {
+                // Adapted from http://stackoverflow.com/questions/329355/cannot-delete-directory-with-directory-deletepath-true/329502#329502
+                var files = EnumerateFiles();
+                var dirs = EnumerateDirectories();
+
+                foreach (var file in files)
+                {
+                    // Make sure the file is not readonly.
+                    file.Attributes = FileAttributes.Normal;
+                    file.Delete();
+                }
+
+                foreach (var dir in dirs)
+                {
+                    dir.Delete(true);
+                }
+            }
+
+            // Make sure the directory is not readonly
+            inner.Attributes = FileAttributes.Normal;
             inner.Delete(recursive);
         }
 
         public IEnumerable<IDirectoryInfo> EnumerateDirectories()
         {
-            return inner.EnumerateDirectories().Select(Wrap);
+            return inner.EnumerateDirectories().Select(Wrap).WhereNotNull();
         }
 
         public IEnumerable<IDirectoryInfo> EnumerateDirectories(string searchPattern)
         {
-            return inner.EnumerateDirectories(searchPattern).Select(Wrap);
+            return inner.EnumerateDirectories(searchPattern).Select(Wrap).WhereNotNull();
         }
 
         public IEnumerable<IDirectoryInfo> EnumerateDirectories(string searchPattern, SearchOption searchOption)
         {
-            return inner.EnumerateDirectories(searchPattern, searchOption).Select(Wrap);
+            return inner.EnumerateDirectories(searchPattern, searchOption).Select(Wrap).WhereNotNull();
         }
 
         public IEnumerable<IFileInfo> EnumerateFiles()
         {
-            return inner.EnumerateFiles().Select(FileInfo.Wrap);
+            return inner.EnumerateFiles().Select(FileInfo.Wrap).WhereNotNull();
         }
 
         public IEnumerable<IFileInfo> EnumerateFiles(string searchPattern)
         {
-            return inner.EnumerateFiles(searchPattern).Select(FileInfo.Wrap);
+            return inner.EnumerateFiles(searchPattern).Select(FileInfo.Wrap).WhereNotNull();
         }
 
         public IEnumerable<IFileInfo> EnumerateFiles(string searchPattern, SearchOption searchOption)
         {
-            return inner.EnumerateFiles(searchPattern, searchOption).Select(FileInfo.Wrap);
+            return inner.EnumerateFiles(searchPattern, searchOption).Select(FileInfo.Wrap).WhereNotNull();
         }
 
         public IEnumerable<IFileSystemInfo> EnumerateFileSystemInfos()
         {
-            return inner.EnumerateFileSystemInfos().Select(Wrap);
+            return inner.EnumerateFileSystemInfos().Select(Wrap).WhereNotNull();
         }
 
         public IEnumerable<IFileSystemInfo> EnumerateFileSystemInfos(string searchPattern)
         {
-            return inner.EnumerateFileSystemInfos(searchPattern).Select(Wrap);
+            return inner.EnumerateFileSystemInfos(searchPattern).Select(Wrap).WhereNotNull();
         }
 
         public IEnumerable<IFileSystemInfo> EnumerateFileSystemInfos(string searchPattern, SearchOption searchOption)
         {
-            return inner.EnumerateFileSystemInfos(searchPattern, searchOption).Select(Wrap);
+            return inner.EnumerateFileSystemInfos(searchPattern, searchOption).Select(Wrap).WhereNotNull();
         }
 
         public System.Security.AccessControl.DirectorySecurity GetAccessControl()

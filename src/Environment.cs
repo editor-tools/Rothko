@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NullGuard;
 using System.ComponentModel.Composition;
 using Env = System.Environment;
 
@@ -10,7 +11,7 @@ namespace Rothko
     {
         public Environment()
         {
-            OSVersion = new OperatingSystemInfo(Env.OSVersion);
+            OSVersion = new OperatingSystemInfo();
         }
 
         public string CommandLine
@@ -135,11 +136,13 @@ namespace Rothko
             return Env.GetCommandLineArgs();
         }
 
+        [return: AllowNull]
         public string GetEnvironmentVariable(string variable)
         {
             return Env.GetEnvironmentVariable(variable);
         }
 
+        [return: AllowNull]
         public string GetEnvironmentVariable(string variable, EnvironmentVariableTarget target)
         {
             return Env.GetEnvironmentVariable(variable, target);
