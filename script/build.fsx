@@ -1,13 +1,16 @@
 #r @"..\tools\FAKE.Core\tools\FakeLib.dll"
 open Fake 
 open Fake.XUnit2Helper
+open Fake.Git.Information
+
+let commit = getCurrentSHA1(".")
 
 let authors = ["Phil Haack"]
 
 // project name and description
 let projectName = "Rothko"
 let projectDescription = "Abstractions!"
-let projectSummary = projectDescription // TODO: write a summary
+let projectSummary = "This package is a modified signed build of Rothko from https://github.com/editor-tools/Rothko/commit/" + commit
 
 // directories
 let buildDir = "./src/bin"
@@ -30,7 +33,7 @@ Target "AssemblyInfo" (fun _ ->
     CreateCSharpAssemblyInfo "./SolutionInfo.cs"
       [ Attribute.Product projectName
         Attribute.Version releaseNotes.AssemblyVersion
-        Attribute.FileVersion releaseNotes.AssemblyVersion]
+        Attribute.FileVersion releaseNotes.AssemblyVersion ]
 )
 
 Target "BuildApp" (fun _ ->
@@ -57,11 +60,11 @@ Target "Package" (fun _ ->
         {p with
             Authors = authors
             Project = projectName
-            Description = projectDescription                               
+            Description = projectDescription
             OutputPath = packagingDir
             Summary = projectSummary
             WorkingDir = packagingDir
-            Version = releaseNotes.AssemblyVersion
+            Version = releaseNotes.AssemblyVersion + "-ghfvs"
             ReleaseNotes = toLines releaseNotes.Notes
             AccessKey = getBuildParamOrDefault "nugetkey" ""
             Publish = hasBuildParam "nugetkey" }) "Rothko.nuspec"
