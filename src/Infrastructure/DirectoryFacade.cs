@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.IO;
+using NullGuard;
 
 namespace Rothko
 {
@@ -34,6 +35,21 @@ namespace Rothko
             return Directory.GetCurrentDirectory();
         }
 
+        public IEnumerable<string> EnumerateDirectories(string path)
+        {
+            return Directory.EnumerateDirectories(path);
+        }
+
+        public IEnumerable<string> EnumerateDirectories(string path, string searchPattern)
+        {
+            return Directory.EnumerateDirectories(path, searchPattern);
+        }
+
+        public IEnumerable<string> EnumerateDirectories(string path, string searchPattern, SearchOption searchOption)
+        {
+            return Directory.EnumerateDirectories(path, searchPattern, searchOption);
+        }
+
         public IEnumerable<string> EnumerateFiles(string path)
         {
             return EnumerateFiles(path, "*.*");
@@ -48,6 +64,13 @@ namespace Rothko
         {
             return Directory.EnumerateFiles(path, searchPattern, searchOption);
         }
+
+        [return: AllowNull]
+        public IDirectoryInfo GetParent(string path)
+        {
+            return DirectoryInfo.Wrap(Directory.GetParent(path));
+        }
+
         public IDirectoryInfo GetDirectory(string path)
         {
             return new DirectoryInfo(path);

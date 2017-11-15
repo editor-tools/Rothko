@@ -1,5 +1,6 @@
 ﻿
 using System.Diagnostics;
+using NullGuard;
 
 namespace Rothko
 {
@@ -46,11 +47,12 @@ namespace Rothko
 
         internal static IFileInfo Wrap(System.IO.FileInfo file)
         {
-            return new FileInfo(file);
+            return file != null ? new FileInfo(file) : null;
         }
 
         public IDirectoryInfo Directory
         {
+            [return: AllowNull]
             get { return DirectoryInfo.Wrap(inner.Directory); }
         }
 

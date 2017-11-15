@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using NullGuard;
 
 namespace Rothko
 {
@@ -22,14 +23,38 @@ namespace Rothko
 
         public int Id { get { return 4; } }
 
-        public ProcessStartInfo StartInfo { get; set; }
+        public ProcessStartInfo StartInfo
+        {
+            [return: AllowNull]
+            get; set;
+        }
 
-        public StreamWriter StandardInput { get { return null; } }
+        public StreamWriter StandardInput
+        {
+            [return: AllowNull]
+            get { return null; }
+        }
+
+        public StreamReader StandardOutput
+        {
+            [return: AllowNull]
+            get { return null; }
+        }
+
+        public StreamReader StandardError
+        {
+            [return: AllowNull]
+            get { return null; }
+        }
 
         public int ExitCode { get { return 0; } }
         public IntPtr MainWindowHandle { get { return IntPtr.Zero; } }
 
-        public string ProcessName { get { return null; } }
+        public string ProcessName
+        {
+            [return: AllowNull]
+            get { return null; }
+        }
 
         public void BeginOutputReadLine()
         {

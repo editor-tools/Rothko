@@ -7,6 +7,70 @@ namespace Rothko
     [Export(typeof(IDialogFacade))]
     public class DialogFacade : IDialogFacade
     {
+        public DialogResult ShowMessage(
+            string text,
+            string caption,
+            MessageBoxButtons buttons,
+            MessageBoxIcon icon,
+            MessageBoxDefaultButton defaultButton,
+            MessageBoxOptions options,
+            bool displayHelpButton)
+        {
+            return MessageBox.Show(text, caption, buttons, icon, defaultButton, options, displayHelpButton);
+        }
+
+        public DialogResult ShowMessage(
+            string text,
+            string caption,
+            MessageBoxButtons buttons,
+            MessageBoxIcon icon,
+            MessageBoxDefaultButton defaultButton,
+            MessageBoxOptions options,
+            string helpFilePath)
+        {
+            return MessageBox.Show(text, caption, buttons, icon, defaultButton, options, helpFilePath);
+        }
+
+        public DialogResult ShowMessage(
+            string text,
+            string caption,
+            MessageBoxButtons buttons,
+            MessageBoxIcon icon,
+            MessageBoxDefaultButton defaultButton,
+            MessageBoxOptions options,
+            string helpFilePath,
+            HelpNavigator navigator)
+        {
+            return MessageBox.Show(text, caption, buttons, icon, defaultButton, options, helpFilePath, navigator);
+        }
+
+        public DialogResult ShowMessage(
+            string text,
+            string caption,
+            MessageBoxButtons buttons,
+            MessageBoxIcon icon,
+            MessageBoxDefaultButton defaultButton,
+            MessageBoxOptions options,
+            string helpFilePath,
+            HelpNavigator navigator,
+            object param)
+        {
+            return MessageBox.Show(text, caption, buttons, icon, defaultButton, options, helpFilePath, navigator, param);
+        }
+
+        public DialogResult ShowMessage(
+            string text,
+            string caption,
+            MessageBoxButtons buttons,
+            MessageBoxIcon icon,
+            MessageBoxDefaultButton defaultButton,
+            MessageBoxOptions options,
+            string helpFilePath,
+            string keyword)
+        {
+            return MessageBox.Show(text, caption, buttons, icon, defaultButton, options, helpFilePath, keyword);
+        }
+
         public SaveDialogResult ShowSaveFileDialog(string filterPattern)
         {
             var dialog = new SaveFileDialog()
@@ -17,6 +81,19 @@ namespace Rothko
             return dialog.ShowDialog() == true
                 ? new SaveDialogResult(dialog.FileName)
                 : SaveDialogResult.Failed;
+        }
+
+        public OpenDialogResult ShowOpenFileDialog(string filePattern, bool multiselect)
+        {
+            using (var dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = multiselect;
+                dialog.Filter = filePattern;
+                var result = dialog.ShowDialog();
+                return result == DialogResult.OK
+                    ? new OpenDialogResult(dialog.FileNames)
+                    : new OpenDialogResult();
+            }
         }
 
         public BrowseDirectoryResult BrowseForDirectory(string selectedPath, string title)

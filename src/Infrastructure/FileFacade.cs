@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 ﻿using System.ComponentModel.Composition;
 using System.IO;
+using System.Security.AccessControl;
 using System.Text;
 
 namespace Rothko
@@ -8,6 +9,26 @@ namespace Rothko
     [Export(typeof(IFileFacade))]
     public class FileFacade : IFileFacade
     {
+        public FileStream Create(string path)
+        {
+            return File.Create(path);
+        }
+
+        public FileStream Create(string path, int bufferSize)
+        {
+            return File.Create(path, bufferSize);
+        }
+
+        public FileStream Create(string path, int bufferSize, FileOptions options)
+        {
+            return File.Create(path, bufferSize, options);
+        }
+
+        public FileStream Create(string path, int bufferSize, FileOptions options, FileSecurity fileSecurity)
+        {
+            return File.Create(path, bufferSize, options, fileSecurity);
+        }
+
         public bool Exists(string path)
         {
             return File.Exists(path);
